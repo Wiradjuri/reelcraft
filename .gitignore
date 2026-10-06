@@ -1,0 +1,48 @@
+# --- Secrets & local configuration --------------------------------------------
+# Never commit real credentials. .env.example files are the documented templates.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.encryption_key
+
+# --- Backend (Python) --------------------------------------------------------
+# Local data: development SQLite database and the auto-generated encryption key.
+backend/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+build/
+
+# --- Frontend (Node) ---------------------------------------------------------
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+.vite/
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+# --- Editors & OS ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.log
