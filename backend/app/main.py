@@ -26,6 +26,7 @@ from app.core.errors import AppError, RateLimited
 from app.core.logging import configure_logging, get_logger
 from app.core.rate_limit import RateLimiter
 from app.core.security import SecretBox
+from app.db.migrations import run_startup_migrations
 from app.db.session import Database
 
 log = get_logger(__name__)
@@ -44,6 +45,8 @@ def create_app(settings: Settings | None = None, router: AIRouter | None = None)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if settings.migrate_on_startup:
+            await run_startup_migrations(settings)
         database = Database(settings)
         app.state.container = Container(
             settings=settings,

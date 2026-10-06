@@ -5,14 +5,13 @@ from __future__ import annotations
 import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from app.core.config import get_settings
 from app.db import models  # noqa: F401  (register models)
 from app.db.base import Base
+from app.db.session import create_engine
 
 config = context.config
 if config.config_file_name is not None and config.attributes.get("configure_logger", True):
@@ -21,8 +20,9 @@ if config.config_file_name is not None and config.attributes.get("configure_logg
 settings = get_settings()
 if not config.get_main_option("sqlalchemy.url"):
     config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
-if settings.database_url.startswith("sqlite"):
-    settings.data_dir.mkdir(parents=True, exist_ok=True)
+
+# Arbitrary constant: serialises concurrent upgrades (e.g. several serverless instances booting at once).
+MIGRATION_LOCK_ID = 7226001
 
 target_metadata = Base.metadata
 
@@ -47,13 +47,14 @@ def run_migrations_offline() -> None:
 def do_run_migrations(connection: Connection) -> None:
     _configure(connection)
     with context.begin_transaction():
+        if connection.dialect.name == "postgresql":
+            connection.exec_driver_sql(f"SELECT pg_advisory_xact_lock({MIGRATION_LOCK_ID})")
         context.run_migrations()
 
 
 async def run_async_migrations() -> None:
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.", poolclass=pool.NullPool
-    )
+    # Same connection handling as the app (TLS, pooler quirks); one short-lived connection, no pool.
+    connectable = create_engine(settings, url=config.get_main_option("sqlalchemy.url"), serverless=True, echo=False)
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
     await connectable.dispose()

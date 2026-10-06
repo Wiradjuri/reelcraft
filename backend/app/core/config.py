@@ -46,10 +46,20 @@ class Settings(BaseSettings):
     frontend_dist_dir: Path | None = BACKEND_ROOT.parent / "frontend" / "dist"
     trusted_hosts: Annotated[list[str], NoDecode] = Field(default_factory=lambda: ["*"])
 
+    # --- Hosting -----------------------------------------------------------------
+    # Vercel sets VERCEL=1 at build and run time. Serverless hosts have a read-only,
+    # throwaway filesystem, so nothing may be stored on disk there.
+    vercel: bool = False
+
     # --- Persistence -------------------------------------------------------------
+    # SQLite for local development; PostgreSQL everywhere else. Plain ``postgres://`` /
+    # ``postgresql://`` URLs (as issued by Neon, Vercel, Supabase...) are accepted as-is.
     database_url: str = f"sqlite+aiosqlite:///{BACKEND_ROOT / 'data' / 'reelcraft.db'}"
     database_echo: bool = False
     data_dir: Path = BACKEND_ROOT / "data"
+    # Apply pending Alembic migrations when the API starts. Defaults to on for
+    # serverless hosts (there is no release step to run them from), off elsewhere.
+    run_migrations_on_startup: bool | None = None
 
     # --- Security ----------------------------------------------------------------
     # Key used to encrypt customer-supplied AI credentials at rest (Fernet, url-safe base64, 32 bytes).
@@ -86,8 +96,33 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
+    @field_validator("database_url", mode="after")
+    @classmethod
+    def _use_async_driver(cls, value: str) -> str:
+        """Point provider-issued PostgreSQL URLs at the async driver the app uses."""
+        value = value.strip()
+        for prefix in ("postgres://", "postgresql://", "postgresql+psycopg2://", "postgresql+psycopg://"):
+            if value.startswith(prefix):
+                return "postgresql+asyncpg://" + value[len(prefix) :]
+        return value
+
     @model_validator(mode="after")
     def _production_guards(self) -> Settings:
+        if self.vercel:
+            # A hosted deployment is production unless the operator says otherwise.
+            if "environment" not in self.model_fields_set:
+                self.environment = "production"
+            if self.uses_sqlite:
+                raise ValueError(
+                    "DATABASE_URL must point at a PostgreSQL database on Vercel: its filesystem is "
+                    "read-only, so the development SQLite file cannot be used. Connect a Postgres "
+                    "database (Vercel dashboard > Storage) and redeploy."
+                )
+            if self.secret_encryption_key is None:
+                raise ValueError(
+                    "SECRET_ENCRYPTION_KEY must be set on Vercel: a key generated on its throwaway "
+                    "filesystem would be lost, making saved AI keys unreadable."
+                )
         if self.environment == "production":
             if self.secret_encryption_key is None:
                 raise ValueError("SECRET_ENCRYPTION_KEY must be set in production.")
@@ -98,6 +133,20 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment == "production"
+
+    @property
+    def uses_sqlite(self) -> bool:
+        return self.database_url.startswith("sqlite")
+
+    @property
+    def is_serverless(self) -> bool:
+        return self.vercel
+
+    @property
+    def migrate_on_startup(self) -> bool:
+        if self.run_migrations_on_startup is not None:
+            return self.run_migrations_on_startup
+        return self.is_serverless
 
     @property
     def secure_cookies(self) -> bool:

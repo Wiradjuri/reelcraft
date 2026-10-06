@@ -58,7 +58,7 @@ The important settings:
 
 | Variable | Purpose |
 | --- | --- |
-| `DATABASE_URL` | Defaults to SQLite in `backend/data/`. Use `postgresql+asyncpg://…` in production. |
+| `DATABASE_URL` | Defaults to SQLite in `backend/data/`. Use PostgreSQL in production; URLs from Neon, Vercel, Supabase etc. (`postgresql://…?sslmode=require`) work as issued. |
 | `SECRET_ENCRYPTION_KEY` | Fernet key that encrypts customers' own AI keys at rest. **Required in production.** Auto-generated locally. |
 | `PLATFORM_AI_PROVIDER` + `OPENAI_API_KEY` (etc.) | CGM-hosted AI used by customers on "ReelCraft AI". Never exposed to browsers. |
 | `AI_MODEL_CATALOG_PATH` | Optional override of [`backend/app/ai/model_catalog.toml`](backend/app/ai/model_catalog.toml) (tier → model mapping). |
@@ -120,6 +120,19 @@ For production deployments:
    (`FRONTEND_DIST_DIR`) or from a CDN on the same origin.
 4. The in-process rate limiter and AI health tracker are per-process; use a shared store
    (e.g. Redis) behind the same interfaces when scaling horizontally.
+
+### Deploying to Vercel
+
+`vercel.json` runs the frontend and the API as two services of one project. Vercel's
+filesystem is read-only and throwaway, so the API refuses to start there on SQLite.
+
+1. In the Vercel project, open **Storage**, create a Postgres database (Neon) and connect it.
+   That sets `DATABASE_URL`.
+2. Add `SECRET_ENCRYPTION_KEY` (generate it once, see `.env.example`) and any platform AI
+   keys under **Settings > Environment Variables**.
+3. Deploy. On Vercel the API defaults to `ENVIRONMENT=production`, opens a fresh database
+   connection per request (no pool) and applies pending migrations when it boots, so there
+   is no separate release step. Set `RUN_MIGRATIONS_ON_STARTUP=false` to opt out.
 
 ## Repository layout
 
