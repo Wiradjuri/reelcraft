@@ -96,6 +96,12 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
+    @field_validator("environment", "platform_ai_provider", mode="before")
+    @classmethod
+    def _normalise_choice(cls, value: object) -> object:
+        """Accept ``ANTHROPIC`` / `` Production `` as typed into a hosting dashboard."""
+        return value.strip().lower() if isinstance(value, str) else value
+
     @field_validator("database_url", mode="after")
     @classmethod
     def _use_async_driver(cls, value: str) -> str:

@@ -77,3 +77,9 @@ def test_vercel_refuses_the_development_sqlite_file(tmp_path: Path) -> None:
 def test_vercel_requires_a_stable_encryption_key(tmp_path: Path) -> None:
     with pytest.raises(ValidationError, match="SECRET_ENCRYPTION_KEY must be set"):
         _settings(tmp_path, vercel=True, database_url=NEON_URL, secret_encryption_key=None)
+
+
+def test_choice_settings_ignore_case_and_whitespace(tmp_path: Path) -> None:
+    settings = _settings(tmp_path, environment=" Test ", platform_ai_provider="ANTHROPIC")
+    assert settings.environment == "test"
+    assert settings.platform_ai_provider == "anthropic"
