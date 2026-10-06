@@ -113,3 +113,35 @@ def test_field_prompt_rejects_unknown_fields() -> None:
 
     with pytest.raises(ValueError, match="cannot be regenerated"):
         build_field_prompt(spec=spec(), brand=BRAND, current={}, field_name="estimated_duration_seconds")
+
+
+def test_reel_prompt_enforces_retention_proof_and_production_rules() -> None:
+    prompt = build_generation_prompt(spec(), BRAND)
+    for rule in (
+        "Hold the payoff",
+        "Prove it once",
+        "square-bracket placeholder",
+        "details_to_confirm",
+        "Do not pad",
+        "must not exceed 30",
+        "smallest next step",
+        "exactly one emphasis cut",
+        "on the proof line",
+        "never a guide",
+        "must not repeat the hook",
+    ):
+        assert rule in prompt.user, rule
+    reel = prompt.json_schema["properties"]["variations"]["items"]["properties"]
+    for name in ("camera_setup", "b_roll", "edit_notes", "thumbnail_text", "details_to_confirm"):
+        assert name in reel
+
+
+def test_reels_saved_before_the_production_fields_still_validate() -> None:
+    from app.content.schemas import ReelProject
+    from tests.fakes import REEL
+
+    new_fields = ("camera_setup", "b_roll", "edit_notes", "thumbnail_text", "details_to_confirm")
+    old = {key: value for key, value in REEL.items() if key not in new_fields}
+    reel = ReelProject.model_validate(old)
+    assert reel.thumbnail_text == ""
+    assert reel.details_to_confirm == []

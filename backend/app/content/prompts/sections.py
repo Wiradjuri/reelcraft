@@ -31,7 +31,8 @@ Standards:
 - Write for the specific brand, audience and platform described. Generic content that could \
 belong to any business is a failure.
 - Every piece needs a specific, scroll-stopping opening. Avoid clichés such as "In today's \
-fast-paced world", "Are you ready to…", "Look no further", "game-changer", "unlock", "elevate".
+fast-paced world", "Are you ready to…", "Look no further", "game-changer", "unlock", "elevate", and the \
+"it's not X, it's Y" reframe ("Wrong question.", "Stop doing X. Start doing Y.").
 - Be concrete: real situations, specific details, sensory language, clear benefits.
 - Never invent statistics, awards, testimonials, prices, guarantees or claims the brand did \
 not provide. Never attribute quotes to real famous people.
@@ -141,11 +142,32 @@ def content_type_section(spec: GenerationSpec) -> str:
             return (
                 f"Create Instagram Reel plans for a {o.reel_duration}-second vertical video.\n"
                 f"- The hook must land in the first 1-3 seconds, visually and verbally.\n"
-                f"- Scenes must cover the full ~{o.reel_duration} seconds with realistic timings; "
-                f"estimated_duration_seconds should be close to {o.reel_duration}.\n"
+                "- Hold the payoff. The hook opens a question or tension; the line after it must deepen it, never "
+                "answer it. Resolve it in the final third, and make the last spoken line before the call to action "
+                "call back to the hook.\n"
+                "- Prove it once. By the midpoint the script needs one concrete proof moment: a specific case with "
+                "what happened, the figure and the reason it worked. A general claim is not proof.\n"
+                "- Never invent the proof. Where the brand has not supplied the real detail, write a square-bracket "
+                "placeholder in the script (for example [amount under the top offer] or [suburb]) and list each one "
+                "in details_to_confirm with what the brand needs to fill in.\n"
+                f"- Do not pad. {o.reel_duration} seconds is the ceiling: scenes use realistic timings and "
+                f"estimated_duration_seconds must not exceed {o.reel_duration}, but finish early if the idea is "
+                "complete. Cut any line that restates an earlier one.\n"
                 "- Shots must be filmable by a small business with a phone: be specific about framing and movement.\n"
                 "- The script should be speakable at a natural pace (about 2.5 words per second).\n"
                 "- On-screen text must be short and readable at a glance.\n"
+                "- Call to action: unless a preferred style is given below, ask for the smallest next step a viewer "
+                "who has never heard of the brand would take (message one keyword, comment one word, save the post) "
+                "and say exactly what they get for it. Promise only what the brand can send in a reply without "
+                "preparing anything new (an answer, a tip, the first question they would ask), never a guide, "
+                "checklist or download the brand has not mentioned. Booking a call or 'link in bio' is too big an "
+                "ask for a first-time viewer.\n"
+                "- camera_setup: orientation, framing, tripod or handheld, light and sound in one or two sentences.\n"
+                "- b_roll: only cutaways that add proof or clarity, each tied to the script line it covers.\n"
+                "- edit_notes: where the hook text appears, exactly one emphasis cut (punch-in or angle change) placed "
+                "on the proof line, meaning the sentence that states the result, never on the hook or on explanation; "
+                "subtitles on; and the end card.\n"
+                "- thumbnail_text: six words or fewer that promise the outcome or story. It must not repeat the hook.\n"
                 "- Include a caption written to accompany the reel."
             )
         case ContentType.CAPTION:

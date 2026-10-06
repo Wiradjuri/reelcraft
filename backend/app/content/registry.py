@@ -52,7 +52,7 @@ REGISTRY: dict[ContentType, ContentTypeSpec] = {
         payload_model=ReelProject,
         title_field="title",
         complexity=3,
-        output_tokens_per_variation=1400,
+        output_tokens_per_variation=1800,
         default_variations=3,
         max_variations=4,
         regenerable_fields=(
@@ -65,6 +65,16 @@ REGISTRY: dict[ContentType, ContentTypeSpec] = {
             RegenerableField("voiceover", "Voice-over direction"),
             RegenerableField("on_screen_text", "On-screen text"),
             RegenerableField("audio_suggestion", "Audio"),
+            RegenerableField("camera_setup", "Camera"),
+            RegenerableField("b_roll", "B-roll", "Tie each cutaway to a specific script line."),
+            RegenerableField(
+                "edit_notes", "Edit", "Put the one emphasis cut on the line where the result lands, not on explanation."
+            ),
+            RegenerableField(
+                "thumbnail_text",
+                "Thumbnail",
+                "Promise the outcome or story in six words or fewer; do not repeat the hook.",
+            ),
             RegenerableField("caption", "Caption"),
             RegenerableField("cta", "Call to action"),
             RegenerableField("hashtags", "Hashtags"),

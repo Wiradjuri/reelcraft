@@ -15,6 +15,11 @@ const reel = {
   voiceover: 'Warm',
   on_screen_text: ['Back!'],
   audio_suggestion: 'Lo-fi',
+  camera_setup: 'Vertical, tripod',
+  b_roll: ['Milk steaming, over line 2'],
+  edit_notes: ['Punch in on the reveal'],
+  thumbnail_text: 'The latte is back',
+  details_to_confirm: ['[launch date]: the day it returns'],
   caption: 'Autumn in a cup.',
   cta: 'Tag a friend',
   hashtags: ['#latte', '#autumn'],
@@ -56,7 +61,18 @@ describe('content formatting', () => {
   it('produces a labelled brief with every component', () => {
     const brief = fullBriefText('reel', reel)
     expect(brief.startsWith('Latte reveal (30s)')).toBe(true)
-    for (const label of ['HOOK', 'SHOTS & SCENES', 'SCRIPT', 'CAPTION', 'HASHTAGS'])
+    for (const label of [
+      'HOOK',
+      'FILL IN BEFORE FILMING',
+      'SHOTS & SCENES',
+      'SCRIPT',
+      'CAMERA',
+      'B-ROLL',
+      'EDIT',
+      'THUMBNAIL',
+      'CAPTION',
+      'HASHTAGS',
+    ])
       expect(brief).toContain(label)
   })
 

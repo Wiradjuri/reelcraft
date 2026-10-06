@@ -64,6 +64,28 @@ class ReelProject(_Payload):
     audio_suggestion: Text = Field(
         description="Music/sound direction (mood, tempo) — not a specific copyrighted track."
     )
+    # Production fields added in prompt version 2026.10.2; defaults keep older saved reels valid.
+    camera_setup: Text = Field(
+        default="", description="How to film it: orientation, framing, support (tripod/handheld), light and sound."
+    )
+    b_roll: list[str] = Field(
+        default_factory=list,
+        description="Optional cutaway shots, each tied to the script line it covers. Empty if none are needed.",
+    )
+    edit_notes: list[str] = Field(
+        default_factory=list,
+        description="Editing instructions: where text appears, the one emphasis cut and which line it lands on, "
+        "subtitles, end card.",
+    )
+    thumbnail_text: Text = Field(
+        default="",
+        description="Cover text, six words or fewer, promising the outcome or story. Never a repeat of the hook.",
+    )
+    details_to_confirm: list[str] = Field(
+        default_factory=list,
+        description="Every [bracketed] placeholder used in the script, with what real detail the brand must supply "
+        "before filming. Empty if the script uses none.",
+    )
     caption: RequiredText = Field(description="The Instagram caption to post with the reel, excluding hashtags.")
     cta: RequiredText = Field(description="The single call to action used in the reel and caption.")
     hashtags: Hashtags = Field(description="Relevant hashtags, each starting with #.")

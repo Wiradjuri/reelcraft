@@ -157,6 +157,12 @@ export interface ReelProject {
   voiceover: string
   on_screen_text: string[]
   audio_suggestion: string
+  /** Production fields: absent on reels generated before prompt version 2026.10.2. */
+  camera_setup?: string
+  b_roll?: string[]
+  edit_notes?: string[]
+  thumbnail_text?: string
+  details_to_confirm?: string[]
   caption: string
   cta: string
   hashtags: string[]

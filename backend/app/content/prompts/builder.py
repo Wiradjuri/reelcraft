@@ -15,7 +15,7 @@ from app.content.prompts.angles import Angle, angles_for
 from app.content.registry import field_envelope, get_spec, variations_envelope
 from app.content.requests import BrandContext, GenerationSpec
 
-PROMPT_VERSION = "2026.10.1"
+PROMPT_VERSION = "2026.10.2"
 
 
 @dataclass(frozen=True)

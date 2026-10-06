@@ -2,7 +2,7 @@ import { toast } from 'sonner'
 
 import { toApiError } from '@/lib/api/client'
 import type { ContentType } from '@/lib/api/types'
-import { CONTENT_FIELDS } from '@/lib/content'
+import { CONTENT_FIELDS, isEmptyValue } from '@/lib/content'
 import { ContentField } from './ContentField'
 
 interface ContentViewProps {
@@ -47,6 +47,7 @@ export function ContentView({
   return (
     <div className="divide-line flex flex-col divide-y">
       {CONTENT_FIELDS[type].map((spec) => {
+        if (spec.optional && isEmptyValue(data[spec.name])) return null
         const save = withToast(
           onSaveField && ((v: unknown) => onSaveField(spec.name, v)),
           `${spec.label} updated`,

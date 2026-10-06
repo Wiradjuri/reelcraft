@@ -14,17 +14,30 @@ export interface FieldSpec {
   /** Shown prominently at the top of a card. */
   emphasis?: boolean
   help?: string
+  /** Left out of the page entirely when there is nothing to show. */
+  optional?: boolean
 }
 
 export const CONTENT_FIELDS: Record<ContentType, FieldSpec[]> = {
   reel: [
     { name: 'hook', label: 'Hook', kind: 'text', emphasis: true, help: 'The first 1–3 seconds' },
+    {
+      name: 'details_to_confirm',
+      label: 'Fill in before filming',
+      kind: 'list',
+      help: 'Real details the script needs from you. Replace each [bracket] in the script.',
+      optional: true,
+    },
     { name: 'concept', label: 'Concept', kind: 'longtext' },
     { name: 'opening_shot', label: 'Opening shot', kind: 'longtext' },
     { name: 'scenes', label: 'Shots & scenes', kind: 'scenes' },
     { name: 'script', label: 'Script', kind: 'longtext' },
     { name: 'on_screen_text', label: 'On-screen text', kind: 'list' },
     { name: 'voiceover', label: 'Voice-over direction', kind: 'longtext' },
+    { name: 'camera_setup', label: 'Camera', kind: 'longtext', optional: true },
+    { name: 'b_roll', label: 'B-roll', kind: 'list', optional: true },
+    { name: 'edit_notes', label: 'Edit', kind: 'list', optional: true },
+    { name: 'thumbnail_text', label: 'Thumbnail', kind: 'text', help: 'Cover text', optional: true },
     { name: 'audio_suggestion', label: 'Audio', kind: 'text' },
     { name: 'caption', label: 'Caption', kind: 'longtext' },
     { name: 'cta', label: 'Call to action', kind: 'text' },
@@ -66,6 +79,10 @@ export function asString(value: unknown): string {
 
 export function asList(value: unknown): string[] {
   return Array.isArray(value) ? value.map(asString) : []
+}
+
+export function isEmptyValue(value: unknown): boolean {
+  return value == null || value === '' || (Array.isArray(value) && value.length === 0)
 }
 
 export function asScenes(value: unknown): ReelScene[] {
