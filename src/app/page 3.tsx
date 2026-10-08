@@ -9,13 +9,11 @@ function Landing() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || sending) return;
     setSending(true);
-    setError(null);
     try {
       const response = await fetch("/api/auth/magic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       if (!response.ok) throw new Error((await response.json()).error ?? "Could not send the sign-in email.");
@@ -60,16 +58,12 @@ function Landing() {
                 {sending ? "Sending…" : "Sign in with Email"}
               </button>
             </form>
-            {error && <p style={{ color: "#ff8399", fontSize: 13, marginTop: -8, marginBottom: 12 }}>{error}</p>}
 
             <div className="landing-divider"><span>or</span></div>
 
             <div className="landing-actions">
               <button className="secondary-button" onClick={() => signIn("github")}>
                 Continue with GitHub
-              </button>
-              <button className="secondary-button" onClick={() => signIn("google")}>
-                Continue with Google
               </button>
 
             </div>

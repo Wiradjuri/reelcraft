@@ -1,11 +1,12 @@
 import "server-only";
 
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 import OpenAI from "openai";
 import { z } from "zod";
 import { makeFixtureScript, makeFixtureStoryboard } from "./fixtures";
 import { AppError } from "./http";
-import { getStorage } from "./storage";
 import { projectInputSchema, scriptSchema, storyboardSchema, type Project, type ProjectInput, type Script, type Storyboard } from "./schema";
 import { normalizeSceneDurations } from "./timing";
 
@@ -52,8 +53,11 @@ export async function generatePlan(inputValue: ProjectInput, demo: boolean): Pro
 }
 
 async function saveBase64(base64: string, extension: "png" | "mp3") {
-  const contentType = extension === "png" ? "image/png" : "audio/mpeg";
-  return getStorage().save(`generated/${randomUUID()}.${extension}`, Buffer.from(base64, "base64"), contentType);
+  const name = `${randomUUID()}.${extension}`;
+  const directory = path.join(process.cwd(), "public", "generated");
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(path.join(directory, name), Buffer.from(base64, "base64"), { mode: 0o600 });
+  return `/generated/${name}`;
 }
 
 export async function generateSceneImage(prompt: string, premium: boolean) {
