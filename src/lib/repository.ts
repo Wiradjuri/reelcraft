@@ -32,12 +32,12 @@ function toProject(row: typeof projects.$inferSelect): Project {
 }
 
 export async function listProjects(userId: string): Promise<Project[]> {
-  const rows = db.select().from(projects).where(eq(projects.userId, userId)).all();
+    const rows = db.select().from(projects).where(eq(projects.userId, userId)).all();
   return rows.map(toProject).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 export async function getProject(id: string, userId?: string): Promise<Project | undefined> {
-  const condition = userId
+    const condition = userId
     ? and(eq(projects.id, id), eq(projects.userId, userId))
     : eq(projects.id, id);
   const row = db.select().from(projects).where(condition).get();
@@ -45,7 +45,7 @@ export async function getProject(id: string, userId?: string): Promise<Project |
 }
 
 export async function createProject(input: ProjectInput, userId: string): Promise<Project> {
-  const clean = projectInputSchema.parse(input);
+    const clean = projectInputSchema.parse(input);
   const now = new Date().toISOString();
   const id = randomUUID();
   db.insert(projects).values({
@@ -71,7 +71,7 @@ export async function createProject(input: ProjectInput, userId: string): Promis
 }
 
 export async function updateProject(id: string, patch: unknown, userId?: string): Promise<Project | undefined> {
-  const clean = projectPatchSchema.parse(patch);
+    const clean = projectPatchSchema.parse(patch);
   const existing = await getProject(id, userId);
   if (!existing) return undefined;
   const now = new Date().toISOString();
@@ -92,7 +92,7 @@ export async function updateProject(id: string, patch: unknown, userId?: string)
 }
 
 export async function deleteProject(id: string, userId?: string): Promise<boolean> {
-  const condition = userId
+    const condition = userId
     ? and(eq(projects.id, id), eq(projects.userId, userId))
     : eq(projects.id, id);
   const existing = db.select().from(projects).where(condition).get();
@@ -102,7 +102,7 @@ export async function deleteProject(id: string, userId?: string): Promise<boolea
 }
 
 export async function duplicateProject(id: string, userId?: string): Promise<Project | undefined> {
-  const source = await getProject(id, userId);
+    const source = await getProject(id, userId);
   if (!source) return undefined;
   const now = new Date().toISOString();
   const newId = randomUUID();

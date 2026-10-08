@@ -9,7 +9,6 @@ const sqlite = new Database(dbPath);
 sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("foreign_keys = ON");
 
-// Auto-create tables if they don't exist (for dev/test convenience)
 sqlite.exec(`
   CREATE TABLE IF NOT EXISTS projects (
     id TEXT PRIMARY KEY NOT NULL,
