@@ -1,24 +1,11 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
-import Nodemailer from "next-auth/providers/nodemailer";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
-    }),
-    Nodemailer({
-      server: {
-        host: "smtp.resend.com",
-        port: 465,
-        secure: true,
-        auth: {
-          user: "resend",
-          pass: process.env.RESEND_API_KEY,
-        },
-      },
-      from: "onboarding@resend.dev",
     }),
   ],
   session: { strategy: "jwt" },
@@ -35,8 +22,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/",
   },
 });
