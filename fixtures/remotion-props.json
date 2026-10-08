@@ -1,0 +1,11 @@
+{
+  "title": "Why consistency beats virality for small brands",
+  "accent": "#9d7cff",
+  "scenes": [
+    { "id": "scene-1", "narration": "The post that changes your business probably won't be your most viral one.", "caption": "Viral isn't the goal", "visualPrompt": "Creator studio", "duration": 5 },
+    { "id": "scene-2", "narration": "Consistency creates recognition before it creates reach.", "caption": "Consistency creates recognition", "visualPrompt": "Editorial cards", "duration": 7 },
+    { "id": "scene-3", "narration": "A repeatable message compounds over time.", "caption": "Your message compounds", "visualPrompt": "Concentric circles", "duration": 7 },
+    { "id": "scene-4", "narration": "Build one useful idea into a weekly series.", "caption": "One idea. Every week.", "visualPrompt": "Content calendar", "duration": 7 },
+    { "id": "scene-5", "narration": "Virality is a spike. Trust is a system.", "caption": "Build trust, not spikes", "visualPrompt": "Growth path", "duration": 4 }
+  ]
+}
