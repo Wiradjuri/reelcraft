@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
-import Nodemailer from "next-auth/providers/nodemailer";
+import Credentials from "next-auth/providers/credentials";
+import { verifyMagicToken } from "./magic-link";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -8,24 +9,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
-    Nodemailer({
-      server: "smtps://resend:" + process.env.RESEND_API_KEY + "@smtp.resend.com:465",
-      from: "onboarding@resend.dev",
+    Credentials({
+      id: "magic-link",
+      name: "Email",
+      credentials: { token: { type: "text" } },
+      authorize(credentials) {
+        const email = verifyMagicToken(String(credentials?.token ?? ""));
+        return email ? { id: `email:${email}`, email } : null;
+      },
     }),
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    jwt({ token, profile }) {
-      if (profile) {
-        token.sub = profile.sub ?? token.sub;
-      }
+    jwt({ token, user, profile }) {
+      if (user?.id) token.sub = user.id;
+      else if (profile?.sub) token.sub = profile.sub;
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
-      }
+      if (session.user && token.sub) session.user.id = token.sub;
       return session;
     },
   },
+  pages: { signIn: "/" },
 });
