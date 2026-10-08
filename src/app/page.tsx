@@ -62,9 +62,7 @@ function Landing() {
               <button className="secondary-button" onClick={() => signIn("github")}>
                 Continue with GitHub
               </button>
-              <button className="secondary-button" onClick={() => signIn("google")}>
-                Continue with Google
-              </button>
+
             </div>
           </>
         )}
