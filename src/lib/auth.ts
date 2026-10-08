@@ -2,7 +2,9 @@ import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -16,7 +18,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Email",
       maxAge: 24 * 60 * 60,
       sendVerificationRequest: async ({ identifier: email, url }) => {
-        await resend.emails.send({
+        await getResend().emails.send({
           from: "ReelFlow <onboarding@resend.dev>",
           to: email,
           subject: "Sign in to ReelFlow",
