@@ -12,12 +12,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       server: {
         host: "smtp.resend.com",
         port: 465,
+        secure: true,
         auth: {
           user: "resend",
           pass: process.env.RESEND_API_KEY,
         },
       },
-      from: "ReelFlow <onboarding@resend.dev>",
+      from: "onboarding@resend.dev",
     }),
   ],
   session: { strategy: "jwt" },
