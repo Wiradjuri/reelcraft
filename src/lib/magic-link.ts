@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { AppError } from "./http";
 
 const TTL_MS = 15 * 60 * 1000;
 
@@ -53,5 +54,11 @@ export async function sendMagicLink(email: string, url: string) {
       </div>`,
     }),
   });
-  if (!response.ok) throw new Error(`Resend rejected the email (${response.status}).`);
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as { message?: string };
+    if (response.status === 403 && body.message?.includes("own email address")) {
+      throw new AppError(403, "EMAIL_SANDBOX", "Email sign-in is in sandbox mode and can only reach the account owner right now. Use GitHub or Google to sign in.");
+    }
+    throw new AppError(502, "EMAIL_SEND_FAILED", "The sign-in email could not be sent. Try again or use GitHub or Google.");
+  }
 }

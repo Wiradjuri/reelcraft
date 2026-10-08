@@ -19,7 +19,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: "Email",
       credentials: { token: { type: "text" } },
       authorize(credentials) {
-        const email = verifyMagicToken(String(credentials?.token ?? ""));
+        const token = String(credentials?.token ?? "");
+        // E2E smoke-test bypass: only active when E2E_AUTH_SECRET is set on the server.
+        const e2e = process.env.E2E_AUTH_SECRET;
+        if (e2e && token === `e2e:${e2e}`) return { id: "email:e2e@reelflow.test", email: "e2e@reelflow.test" };
+        const email = verifyMagicToken(token);
         return email ? { id: `email:${email}`, email } : null;
       },
     }),
