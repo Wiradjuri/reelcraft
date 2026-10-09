@@ -1,0 +1,27 @@
+{
+  "files.watcherExclude": {
+    "**/.agents/**": true,
+    "**/.next/**": true,
+    "**/node_modules/**": true,
+    "**/public/exports/**": true,
+    "**/public/generated/**": true
+  },
+  "search.exclude": {
+    "**/.agents": true,
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/public/exports": true,
+    "**/public/generated": true
+  },
+  "files.exclude": {
+    "**/.agents": true,
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
+  "github.copilot.chat.localIndex.enabled": false,
+  "github.copilot.chat.backgroundAgent.enabled": false,
+  "github.copilot.chat.cloudAgent.enabled": false,
+  "github.copilot.chat.cli.mcp.enabled": false,
+  "github.copilot.chat.githubMcpServer.enabled": false
+}

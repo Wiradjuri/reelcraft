@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   try {
     const { email } = bodySchema.parse(await request.json());
     throttle(`magic:${email.toLowerCase()}`, 3, 10 * 60_000);
-    const origin = new URL(request.url).origin;
+    const origin = (process.env.NODE_ENV === "production" && process.env.AUTH_URL ? process.env.AUTH_URL : new URL(request.url).origin).replace(/\/$/, "");
     const token = createMagicToken(email);
     await sendMagicLink(email, `${origin}/verify?token=${encodeURIComponent(token)}`);
     return Response.json({ ok: true });

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { apiError, assertProjectId, AppError, throttle } from "@/lib/http";
 import { requireUserId } from "@/lib/session";
-import { generatePlan, generateSceneImage, generateSectionText, generateVoice } from "@/lib/openai";
+import { generatePlan, generateSceneImage, generateSectionText, generateVoice } from "@/lib/ai";
 import { getProject, updateProject } from "@/lib/repository";
 
 export const runtime = "nodejs";

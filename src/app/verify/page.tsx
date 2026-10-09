@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { LoaderCircle } from "lucide-react";
 
 export default function VerifyPage() {
   const [error, setError] = useState<string | null>(null);
+  const started = useRef(false);
 
   useEffect(() => {
+    if (started.current) return; // links are single-use; never submit twice (StrictMode)
+    started.current = true;
     const token = new URLSearchParams(window.location.search).get("token");
+    window.history.replaceState(null, "", "/verify");
     if (!token) { setError("This sign-in link is missing its token."); return; }
     void signIn("magic-link", { token, redirect: false }).then((result) => {
       if (result?.error) setError("This sign-in link is invalid or has expired. Request a new one.");

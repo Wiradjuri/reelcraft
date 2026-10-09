@@ -15,7 +15,7 @@ export function apiError(error: unknown) {
     return NextResponse.json({ error: error.message, code: error.code }, { status: error.status });
   }
   const status = typeof error === "object" && error && "status" in error ? Number(error.status) : 500;
-  if (status === 429) return NextResponse.json({ error: "OpenAI is busy or the rate limit was reached. Wait a moment and try again.", code: "RATE_LIMITED" }, { status: 429 });
+  if (status === 429) return NextResponse.json({ error: "The AI provider is busy or the rate limit was reached. Wait a moment and try again.", code: "RATE_LIMITED" }, { status: 429 });
   if (status === 400) return NextResponse.json({ error: "The generation request was rejected. Review the content and try again.", code: "REQUEST_REJECTED" }, { status: 400 });
   console.error("ReelFlow request failed", error instanceof Error ? error.message : "Unknown error");
   return NextResponse.json({ error: "Something went wrong while processing the request. Your project is still saved.", code: "INTERNAL_ERROR" }, { status: 500 });
@@ -35,4 +35,3 @@ export function assertProjectId(id: string) {
     throw new AppError(400, "INVALID_PROJECT_ID", "The project identifier is invalid.");
   }
 }
-
